@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if post %}Edit Post{% else %}Create Post{% endif %} - Blog{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">
+                    {% if post %}
+                        <i class="bi bi-pencil-square"></i> Edit Post
+                    {% else %}
+                        <i class="bi bi-plus-circle"></i> Create New Post
+                    {% endif %}
+                </h3>
+            </div>
+            <div class="card-body">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="title" name="title" 
+                               value="{{ post.title|default:'' }}" required maxlength="200"
+                               placeholder="Enter post title">
+                        <div class="form-text">Maximum 200 characters</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="desc" class="form-label">Description <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="desc" name="desc" rows="8" 
+                                  required placeholder="Write your post content here...">{{ post.desc|default:'' }}</textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image</label>
+                        {% if post.image %}
+                        <div class="mb-2">
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" 
+                                 class="img-thumbnail" style="max-height: 200px;">
+                            <p class="text-muted small mt-1">Current image</p>
+                        </div>
+                        {% endif %}
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <div class="form-text">Upload a new image (optional)</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active"
+                                   {% if post.is_active or not post %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                Publish this post (make it active)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i> 
+                            {% if post %}Update Post{% else %}Create Post{% endif %}
+                        </button>
+                        <a href="/" class="btn btn-secondary">
+                            <i class="bi bi-x-lg"></i> Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
